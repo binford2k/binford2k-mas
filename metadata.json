@@ -1,0 +1,12 @@
+{
+  "name": "binford2k-mas",
+  "version": "0.0.1",
+  "author": "binford2k",
+  "summary": "Puppet package provider for the Mac App Store",
+  "license": "Apache 2.0",
+  "source": "https://github.com/binford2k/binford2k-mas",
+  "project_page": "https://github.com/binford2k/binford2k-mas",
+  "issues_url": "https://github.com/binford2k/binford2k-mas/issues",
+  "dependencies": []
+}
+
