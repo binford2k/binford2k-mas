@@ -8,12 +8,14 @@
 
 ## Overview
 
-This is a barebones package provider for the Mac App Store. It's currently barely
-functional, and doesn't even have the ability to install new packages by name.
-But it and the project it depends on are a work in progress.
+This is a barebones package provider for the Mac App Store. It's still fairly
+early in development, but should work for most things. Be aware that the Mac
+App Store is intended for interactive use, so you'll likely get popup dialogs
+requesting your iCloud password unless you save it for free items.
+
+This uses the `mas` command-line tool:
 
 * https://github.com/argon/mas
-* https://github.com/argon/mas/issues/9
 
 ```
 Projects $ puppet resource package
@@ -43,6 +45,29 @@ package { 'Dash':
 }
 ```
 
+This can take standard `ensure` parameters and can also accept App IDs. This is
+a bit weird, and I might refactor it sometime. But it seemed like the most
+reasonable way to handle the unusual versioning scheme used by the Mac App Store.
+This allows you to install apps that don't have unique names.
+
+``` Puppet
+package { 'Dash':
+  ensure   => present,
+  provider => mas,
+}
+
+package { 'Kindle':
+  ensure   => '405399194',
+  provider => mas,
+}
+
+package { 'Twitter':
+  ensure   => latest,
+  provider => mas,
+}
+
+```
+
 ## Setup
 
 This comes with a utility class to install the `mas` tool using Homebrew and
@@ -55,17 +80,18 @@ to mitigate that issue!
 
 ## Limitations
 
-This is super early in development. The `mas` tool doesn't currently have the
-ability to install new packages by name, so this provider cannot install new
-packages, only manage the ones that exist on the system.
-
-* https://github.com/argon/mas/issues/9
+* This is super early in development.
+* Installing by name will only work when the App Store has only a single app by
+  that name. Otherwise, you'll need to use the app ID.
+* You cannot upgrade a single package. Instead, it will upgrade all outdated
+  packages. This is a limitation of the `mas` tool.
+* You can only install the latest version of any app.
+* You may see popup dialogs requesting App Store logins. Choose to save your
+  password for free apps to see this dialog less.
 
 ## Disclaimer
 
-I take no liability for the use of this module. As this uses standard Ruby and
-OpenSSL libraries, it should work anywhere Puppet itself does. I have not yet
-validated on anything other than CentOS, though.
+I take no liability for the use of this module.
 
 Contact
 -------

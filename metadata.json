@@ -1,6 +1,6 @@
 {
   "name": "binford2k-mas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "binford2k",
   "summary": "Puppet package provider for the Mac App Store",
   "license": "Apache 2.0",
