@@ -5,9 +5,10 @@
 class mas (
   $account  = undef,
   $password = undef,
+  $secure   = true,
 ) {
   Exec {
-    path => '/bin:/usr/bin:/usr/local/bin',
+    path => '/bin:/usr/bin:/usr/local/bin:/opt/puppetlabs/bin:',
   }
 
   if $::osfamily == 'Darwin' {
@@ -17,9 +18,23 @@ class mas (
     }
 
     if $password {
-      exec { "mas signin ${account} '${password}'":
-        unless  => 'mas account',
-        require => Exec['brew install argon/mas/mas'],
+      # node_encrypt works in masterless only with additional configuration.
+      if $secure {
+        $secret = node_encrypt($password)
+        exec { 'mas account login':
+          command     => "mas signin ${account} '\$(puppet node decrypt --env SECRET)'",
+          unless      => 'mas account',
+          environment => "SECRET=${secret}",
+          require     => Exec['brew install argon/mas/mas'],
+        }
+        redact('password')
+      }
+      else {
+        exec { 'mas account login':
+          command     => "mas signin ${account} '${password}'",
+          unless      => 'mas account',
+          require     => Exec['brew install argon/mas/mas'],
+        }
       }
     }
   }
